@@ -1,0 +1,72 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+left to right direction
+
+skinparam Padding 2
+skinparam NodeSep 8
+skinparam groupInheritance 2
+
+skinparam class {
+    BackgroundColor<<Category>> LightGray
+    BackgroundColor<<SupportedDiagram>> Yellow
+    BackgroundColor<<Diagram>> White
+    ArrowColor Black
+    BorderColor Black
+}
+
+hide circle
+hide stereotype
+hide methods
+hide fields
+
+title "UML Diagram Types"
+
+abstract Diagram as "UML\nDiagrams" <<Category>>
+abstract Structure as "Structure\nDiagrams" <<Category>>
+abstract Behaviour as "Behaviour\nDiagrams" <<Category>>
+
+Diagram <|-- Structure
+Diagram <|-- Behaviour
+
+together {
+    class Profile as "Profile\nDiagram" <<Diagram>>
+    class Class as "Class\nDiagram" <<SupportedDiagram>>
+    class CompositeStructure as "Composite Structure\nDiagram" <<Diagram>>
+    class Component as "Component\nDiagram" <<SupportedDiagram>>
+    class Deployment as "Deployment\nDiagram" <<SupportedDiagram>>
+    class Object as "Object\nDiagram" <<SupportedDiagram>>
+    class Package as "Package\nDiagram" <<Diagram>>
+}
+
+Structure <|-- Profile
+Structure <|-- Class
+Structure <|-- CompositeStructure 
+Structure <|-- Component 
+Structure <|-- Deployment 
+Structure <|-- Object
+Structure <|-- Package
+
+class Activity as "Activity\nDiagram" <<SupportedDiagram>>
+abstract Interaction as "Interaction\nDiagrams" <<Category>>
+class UseCase as "Use Case\nDiagram" <<SupportedDiagram>>
+class StateMachine as "State Machine\nDiagram" <<SupportedDiagram>>
+
+Behaviour <|-- Activity
+Behaviour <|-- Interaction
+Behaviour <|-- UseCase
+Behaviour <|-- StateMachine 
+
+together {
+    class Sequence as "Sequence\nDiagram" <<SupportedDiagram>>
+    class Communication as "Communication\nDiagram" <<Diagram>>
+    class InteractionOverview as "Interaction Overview\nDiagram" <<Diagram>>
+    class Timing as "Timing\nDiagram" <<Diagram>>
+}
+
+Interaction <|-- Sequence 
+Interaction <|-- Communication
+Interaction <|-- InteractionOverview
+Interaction <|-- Timing
+
+@enduml
