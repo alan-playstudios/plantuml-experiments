@@ -1,0 +1,177 @@
+﻿Attempt at documenting relationships between types used in the MX feature tier implementation
+
+@startuml
+
+title "Type Relationships - MX"
+
+'https://plantuml.com/class-diagram
+
+'skinparam nodesep 35
+'skinparam ranksep 60
+
+'left to right direction
+'skinparam linetype polyline
+skinparam nodesep 10
+skinparam ranksep 100
+hide circle
+hide methods
+hide annotation fields
+
+'WagerConfig o-- "long (BetMultiplier)"
+'WagerConfig o-- BetTierZeroIndexed
+'WagerConfig o-- "QID<BoostTier>"
+
+'package "Inputs" #dddddd
+'{
+'    annotation WagerConfig {}
+'    annotation GameConfig {}
+    annotation ValidatedWager {}
+'}
+
+package "Basic Types" #dddddd
+{
+    annotation "long (BetMultiplier)"
+    annotation BetTierZeroIndexed
+    annotation "QID<BoostTier>"
+    annotation "long (TotalWager)"
+    annotation "int (CostToPlay)"
+}
+
+annotation "string (SystemWagersEnvironmentRegimeKey)"
+
+'WagerConfig --> BoostMapPerGame
+'GameConfig --> BoostMapPerGame
+
+class BoostMapPerGame
+{
+    long[] BetMultipliers
+    Map1<BetTierZeroIndexed, QID<BoostTier>> BetTierZeroIndexedToBoostTier
+    FSharpMap<long, ForAWagerLevel> TotalWagerToForAWagerLevel
+    Func<long, Set1<QID<BoostTier>>> GetBoostTiersAllowedFromPaylineWagerRangeChecked
+    ValidFullWagerPerBoostTier[] ValidFullWagerPerBoostTier
+    AboutKnownSystemWagersEnvironment AboutKnownSystemWagersEnvironment
+}
+
+BoostMapPerGame::BetMultipliers o-- "long (BetMultiplier)"
+BoostMapPerGame::BetTierZeroIndexedToBoostTier o-- "Func<long, Set1<QID<BoostTier>>>"
+BoostMapPerGame::TotalWagerToForAWagerLevel o-- "long (TotalWager)"
+BoostMapPerGame::TotalWagerToForAWagerLevel o-- ForAWagerLevel
+BoostMapPerGame::GetBoostTiersAllowedFromPaylineWagerRangeChecked o-- "long (BetMultiplier)"
+BoostMapPerGame::GetBoostTiersAllowedFromPaylineWagerRangeChecked o-- "QID<BoostTier>"
+BoostMapPerGame::ValidFullWagerPerBoostTier o-- ValidFullWagerPerBoostTier
+BoostMapPerGame::AboutKnownSystemWagersEnvironment o-- AboutKnownSystemWagersEnvironment
+
+'BetTierZeroIndexed --> "Func<long, Set1<QID<BoostTier>>>"
+'"Func<long, Set1<QID<BoostTier>>>" --> "QID<BoostTier>"
+
+class ForAWagerLevel
+{
+    QID<BoostTier> BoostTier
+    BetTierZeroIndexed BetTier
+    long LineWager
+    int CostToPlayThisTier
+}
+
+ForAWagerLevel::BoostTier o-- "QID<BoostTier>"
+ForAWagerLevel::BetTier o-- BetTierZeroIndexed
+ForAWagerLevel::LineWager o-- "long (BetMultiplier)"
+ForAWagerLevel::CostToPlayThisTier o-- "int (CostToPlay)"
+
+class ValidFullWagerPerBoostTier
+{
+    long ValidFullWager
+    QID<BoostTier> BoostTier
+}
+
+ValidFullWagerPerBoostTier::ValidFullWager o-- "long (TotalWager)"
+ValidFullWagerPerBoostTier::BoostTier o-- "QID<BoostTier>"
+
+class AboutKnownSystemWagersEnvironment
+{
+    SystemWagersEnvironment SystemWagersEnvironment
+    'DBuildFromSystemForValidatedWager BuildFromSystemForValidatedWager
+}
+
+AboutKnownSystemWagersEnvironment::SystemWagersEnvironment o-- SystemWagersEnvironment
+'AboutKnownSystemWagersEnvironment::DBuildFromSystemForValidatedWager o-- DBuildFromSystemForValidatedWager
+
+class SystemWagersEnvironment
+{
+    Map<int64, int64> TotalWagerToLineWager
+    string SystemWagersEnvironmentRegimeKey
+}
+
+SystemWagersEnvironment::TotalWagerToLineWager o-- "long (TotalWager)"
+SystemWagersEnvironment::TotalWagerToLineWager o-- "long (BetMultiplier)"
+SystemWagersEnvironment::SystemWagersEnvironmentRegimeKey o-- "string (SystemWagersEnvironmentRegimeKey)"
+
+'class DBuildFromSystemForValidatedWager
+'{
+'    OutcomeSelectionBasis OutcomeSelectionBasis
+'    QID<BoostTier> BoostTier
+'    BetTierZeroIndexed BetTier
+'    ValidatedWager ValidatedWager
+'    Func<long, Set1<QID<BoostTier>>> GetBoostTiersAllowedFromPaylineWagerRangeChecked
+'    --returns--
+'    FromSystemForValidatedWager FromSystemForValidatedWager
+'}
+
+'OutcomeSelectionBasis --> DBuildFromSystemForValidatedWager::OutcomeSelectionBasis
+'"QID<BoostTier>" --> DBuildFromSystemForValidatedWager::BoostTier
+'BetTierZeroIndexed --> DBuildFromSystemForValidatedWager::BetTier
+'ValidatedWager --> DBuildFromSystemForValidatedWager::ValidatedWager
+'"long (BetMultiplier)" --> DBuildFromSystemForValidatedWager::GetBoostTiersAllowedFromPaylineWagerRangeChecked
+'"QID<BoostTier>" --> DBuildFromSystemForValidatedWager::GetBoostTiersAllowedFromPaylineWagerRangeChecked
+'DBuildFromSystemForValidatedWager::FromSystemForValidatedWager --> FromSystemForValidatedWager
+
+class OutcomeSelectionBasis
+{
+    long WagerLevel
+    bool Monetizer
+    Option<bool> BingoIfRelevant
+    Option<string> FurtherClassificationIfRelevant
+}
+
+OutcomeSelectionBasis::WagerLevel o-- "long (BetMultiplier)"
+
+class ValidatedWager
+{
+    long PaylineWager
+    long TotalWager
+}
+
+ValidatedWager::PaylineWager o-- "long (BetMultiplier)"
+ValidatedWager::TotalWager o-- "long (TotalWager)"
+
+class FromSystemForValidatedWager
+{
+    OutcomeSelectionBasis OutcomeSelectionBasis
+    QID<BoostTier> BoostTier
+    BetTierZeroIndexed BetTier
+    ValidatedWager ValidatedWager
+    Func<long, Set1<QID<BoostTier>>> GetBoostTiersAllowedFromPaylineWagerRangeChecked
+    SystemWagersEnvironment SystemWagersEnvironment
+}
+
+FromSystemForValidatedWager::OutcomeSelectionBasis o-- OutcomeSelectionBasis
+FromSystemForValidatedWager::BoostTier o-- "QID<BoostTier>"
+FromSystemForValidatedWager::BetTier o-- BetTierZeroIndexed
+FromSystemForValidatedWager::ValidatedWager o-- ValidatedWager
+FromSystemForValidatedWager::GetBoostTiersAllowedFromPaylineWagerRangeChecked o-- "Func<long, Set1<QID<BoostTier>>>"
+FromSystemForValidatedWager::SystemWagersEnvironment o-- SystemWagersEnvironment
+
+class WagerAndTierCouplingGroups
+{
+    ValidFullWagerPerBoostTier[] ValidFullWagerPerBoostTiers
+    Dictionary<BetTierZeroIndexed, long> TierToFullWager
+    Map1<BetTierZeroIndexed, QID<BoostTier>> BetTierZeroIndexedToBoost
+}
+
+BoostMapPerGame --> WagerAndTierCouplingGroups
+WagerAndTierCouplingGroups::ValidFullWagerPerBoostTier o-- ValidFullWagerPerBoostTier
+WagerAndTierCouplingGroups::TierToFullWager o-- BetTierZeroIndexed
+WagerAndTierCouplingGroups::TierToFullWager o-- "long (TotalWager)"
+WagerAndTierCouplingGroups::BetTierZeroIndexedToBoost o-- BetTierZeroIndexed
+WagerAndTierCouplingGroups::BetTierZeroIndexedToBoost o-- "QID<BoostTier>"
+
+@enduml

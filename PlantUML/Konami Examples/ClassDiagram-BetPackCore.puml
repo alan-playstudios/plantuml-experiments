@@ -1,0 +1,106 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'Formatting
+
+hide circle
+hide empty fields
+hide empty methods
+
+'Title
+
+title "BetPackCore Types"
+
+'Types
+
+class BetPackCore {
+    +string GameId
+    +Either<UntieredBetPackRelated, TieredBetPackRelated> UntieredOrTiered
+    +BetPackRelated WithoutTierDistinction
+    BetPackRelated AssertUntiered()
+    TieredBetPackRelated AssertTiered()
+}
+
+class TieredWagerDatum {
+    +BetTierZeroIndexed BetTierZeroIndexed
+    +long BetMultiplier
+    +QID<BoostTier> BoostTier
+    +long FullWager
+}
+
+class TieredBetPack {
+    +Array1<TieredWagerDatum> WagerData
+    +string RegimeKey
+}
+
+class TieredWagerInput {
+    +TieredWagerDatum TieredWagerSelection
+    +TieredBetPack TieredBetPack
+}
+    
+class TieredBetPackRelated {
+    +string GameId
+    +TieredBetPack TieredBetPack
+    +BetPackRelated WithoutTierDistinction
+    +Dict1<long, TieredWagerInput> FullWagerToTieredWagerInput
+    +TieredWagerInput GetTieredWagerInput()
+    +TieredWagerDatum Min()
+    +TieredWagerDatum Max()
+    +Option<TieredWagerDatum> TryFindFullWagerOrNextGreater()
+    +Option<TieredWagerDatum> TryFindBetMultiplierOrNextGreater()
+}
+
+class WagerDatum {
+    +BetTierZeroIndexed BetTierZeroIndexed
+    +long BetMultiplier
+    +long FullWager
+} 
+
+class BetPack {
+    +Array1<WagerDatum> WagerData
+    +string RegimeKey
+}
+
+class WagerInput {
+    +WagerDatum WagerSelection
+    +BetPack BetPack
+}
+
+class BetPackRelated {
+    +string GameId
+    +BetPack BetPack
+    +Dict1<long, WagerInput> FullWagerToWagerInput
+    +WagerInput GetWagerInput(long searchFullWager)
+    +Option<WagerDatum> TryFindFullWagerOrNextGreater()
+    +Option<WagerDatum> TryFindBetMultiplierOrNextGreater()
+    +WagerDatum Min()
+    +WagerDatum Max()
+}   
+
+'Relationships
+
+BetPackCore --* "0,1" BetPackRelated
+BetPackCore --* "1,0" TieredBetPackRelated
+
+BetPackRelated --* BetPack
+BetPackRelated --* "1..*" WagerInput
+
+BetPack --* "1..*" WagerDatum
+
+WagerInput --* WagerDatum
+WagerInput -r-* BetPack
+
+TieredBetPackRelated --* TieredBetPack
+TieredBetPackRelated -r-* BetPackRelated
+TieredBetPackRelated --* "1..*" TieredWagerInput
+
+TieredBetPack --* "1..*" TieredWagerDatum
+
+TieredWagerInput --* TieredWagerDatum
+TieredWagerInput -r-* TieredBetPack
+
+note top of BetPackCore : Builds from wager configuration + game control file
+note bottom of WagerInput : Untiered game\nlogic-layer input
+note bottom of TieredWagerInput : Tiered game\nlogic-layer input
+
+@enduml

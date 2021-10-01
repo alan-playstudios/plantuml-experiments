@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/state-diagram
+hide empty description
+title Treasure Ball Game State Flow
+
+state BaseGame
+state cFSTrigger <<Choice>>
+state cTBTrigger <<Choice>>
+state FreeGame
+state cFSRemaining <<Choice>>
+state TreasureBall
+
+[*] --> BaseGame
+BaseGame --> cFSTrigger : **spin**
+cFSTrigger --> cTBTrigger : //[FS=None]//
+cTBTrigger --> BaseGame : //[TB=None]//
+FreeGame --> cFSRemaining : **spin**
+cFSRemaining --> FreeGame : //[FS>0]//
+
+cFSTrigger --> FreeGame : //[FS=Some]//
+cFSRemaining --> cTBTrigger : //[FS=0]//
+cTBTrigger --> TreasureBall : **tb/initialize**\n//[TB=Some]//
+TreasureBall --> BaseGame : **tb/collect**
+@enduml

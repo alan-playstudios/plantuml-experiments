@@ -1,0 +1,72 @@
+﻿@startuml
+
+title "BetPack Data Flow (Proposed) - Konami"
+'https://plantuml.com/class-diagram
+
+'skinparam nodesep 35
+'skinparam ranksep 60
+
+left to right direction
+'skinparam linetype polyline
+'skinparam nodesep 5
+'skinparam ranksep 5
+hide circle
+hide methods
+hide fields
+
+package MVPlayer {
+    class getBetPack
+}
+
+package SingleTier {
+    class GetValidSingleTierStuff
+}
+
+package MultiTier {
+    class GetValidMultiTierStuff
+'    class GetAboutWageringSystemPaid
+}
+
+package WebApi {
+    class GameControllers
+}
+
+'PlayStudios.MyVegas.GameLogic.MobileSlots.Games.AllGamesRelatedPlatform.BuildBoostMapPerGame
+class BuildBetPack
+
+'PlayStudios.MyVegas.GameLogic.MobileSlots.Games.AllGamesRelatedPlatform.BMPG1
+BuildSingleTier --> BuildBetPack
+
+'PlayStudios.MyVegas.GameLogic.MobileSlots.Games.AllGamesRelatedPlatform.BMPG2
+BuildMultiTier --> BuildBetPack
+
+'PlayStudios.MyVegas.Mobile.Slots.WebApi.Controllers.ForJackpotManager.GameIDToBoostMapPerGame
+GameToBetPack --> BuildSingleTier
+GameToBetPack --> BuildMultiTier
+
+'PlayStudios.MyVegas.GameLogic.MobileSlots.Games.AllGamesRelatedPlatform.GetBoostMapRelatedFromPerGame2
+'GameToBetPack2 --> BuildSingleTier
+'GameToBetPack2 --> BuildMultiTier
+
+'PlayStudios.MyVegas.GameLogic.MobileSlots.Games.AllGamesRelatedPlatform.LogicLayerKnownConfigurationKnowledgeSource
+'LogicLayerKnownConfigurationKnowledgeSource --> GameToBetPack2
+
+
+'PlayStudios.MyVegas.MVPlay.MVMPlatform.AllGames.getBetPack
+getBetPack --> GetValidMultiTierStuff
+getBetPack --> GetValidSingleTierStuff
+'FullGamePack -> LogicLayerKnownConfigurationKnowledgeSource
+
+GetValidSingleTierStuff --> GameToBetPack
+GameControllers --> GetValidSingleTierStuff : All Existing
+
+GetValidMultiTierStuff --> GameToBetPack
+GameControllers --> GetValidMultiTierStuff : TBMammothPower
+
+'GameControllers --> GetAboutWageringSystemPaid
+'GetAboutWageringSystemPaid --> GetValidMultiTierStuff
+'ForBetBoost --> FullGamePackJackpotManager
+'FullGamePackJackpotManager --> FullGamePack
+
+
+@enduml

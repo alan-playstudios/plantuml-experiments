@@ -1,0 +1,53 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+left to right direction
+
+node Client
+actor Player
+cloud Internet
+
+card Office {
+    actor Developer
+    actor Administrator
+    node Jenkins {
+        artifact Konami.WebApi
+    }
+}
+
+    
+card Rackspace {
+    node LoadBalancer
+    
+    card "Konami ASP.NET" {
+        node web061 as "web061-web080"
+    }
+    
+    node Ava
+    node Admin
+    node Tournament
+    
+    database MSSQL
+    database Couchbase
+    database Redis
+}
+
+Player --> Client
+Client --> Internet
+Internet --> LoadBalancer
+LoadBalancer --> web061
+web061 --> Ava
+Ava --> MSSQL
+web061 --> MSSQL
+web061 --> Couchbase
+web061 --> Redis
+
+Developer --> Jenkins
+Konami.WebApi --> web061
+
+Tournament --> Redis
+Tournament --> Couchbase
+
+Administrator --> Admin
+Admin --> MSSQL
+Admin --> web061
+@enduml

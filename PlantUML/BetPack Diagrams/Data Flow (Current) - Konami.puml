@@ -1,0 +1,50 @@
+﻿@startuml
+
+title "BetPack Data Flow (Current) - Konami"
+'https://plantuml.com/class-diagram
+
+left to right direction
+hide circle
+hide methods
+hide fields
+
+package Ava {
+    class WagerConfig
+}
+
+package Shop {
+    class Sellables
+}
+
+package Tournaments {
+    class Tournaments
+}
+
+package MVPlayer {
+    class GameRunner
+}
+
+package WebApi {
+    class GameControllers
+}
+'
+package ForJackpotManager {
+    class JackpotManager
+}
+
+package ServerCore {
+    class WagerConfig
+    class GameControlFiles
+    class BetPackCore
+}
+
+BetPackCore --> WagerConfig
+BetPackCore --> GameControlFiles
+
+Sellables --> BetPackCore
+Tournaments --> BetPackCore
+GameRunner --> BetPackCore
+JackpotManager --> BetPackCore
+GameControllers --> BetPackCore
+
+@enduml

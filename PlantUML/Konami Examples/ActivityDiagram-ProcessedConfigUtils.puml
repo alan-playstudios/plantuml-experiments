@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+title ProcessedConfigUtils.LoadResource Activity Flow
+start
+:ProcessedConfigUtils.LoadResource();
+#LightGreen:read embedded resource;
+if (JSON optimization?) then (enabled)
+    if (embedded JSON?) then (exists)
+        #LightGreen:read embedded JSON;
+        :deserialize embedded JSON to ProcessedConfig;
+        :Calculate embedded resource VersionMark;
+        if (Compare VersionMarks?) then (match)
+            partition "JSON Optimization Valid" {
+                :return ProcessedConfig;
+                stop
+            }
+        else (mismatch)
+            partition "JSON Optimization Invalid" {
+                #Pink:Create ProcessedConfig\nfrom embedded resource;
+                :serialize ProcessedConfig to JSON;
+                #Orange:write JSON file;
+                :return ProcessedConfig;
+                stop
+            }
+        endif
+    else (doesn't exist)
+        partition "JSON Optimization Missing" {
+            #Pink:Create ProcessedConfig\nfrom embedded resource;
+            :serialize ProcessedConfig to JSON;
+            #Orange:write JSON file;
+                :return ProcessedConfig;
+                stop
+        }
+    endif
+else (disabled)
+    partition "JSON Optimization Disabled" {
+        if (embedded JSON exists?) then (yes)
+            #Orange:delete JSON file;
+        else (no)
+        endif
+        #Pink:Create ProcessedConfig\nfrom embedded resource;
+        :return ProcessedConfig;
+        stop
+    }
+endif
+@enduml
