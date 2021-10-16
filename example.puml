@@ -1,0 +1,20 @@
+@startuml
+participant 1885
+participant 1955
+participant 1985
+participant 2015
+--> 1985
+group I
+1985 --> 1955
+1955 --> 1985
+end
+group II
+1985 --> 2015
+2015 --> 1985
+1985 --> 1955
+end
+group III
+1955 --> 1885
+1885 --> 1985
+end
+@enduml
