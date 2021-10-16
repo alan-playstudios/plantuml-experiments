@@ -1,3 +1,19 @@
+- [Introduction](#introduction)
+- [Installation](#installation)
+  - [PlantUML](#plantuml)
+    - [Local](#local)
+    - [Docker](#docker)
+  - [Tooling](#tooling)
+- [Publishing / Sharing Diagrams](#publishing--sharing-diagrams)
+  - [Image Files](#image-files)
+  - [URLs](#urls)
+  - [Github](#github)
+  - [Google Docs](#google-docs)
+- [Examples](#examples)
+- [Other Resources](#other-resources)
+  - [PlantUML](#plantuml-1)
+  - [UML](#uml)
+
 # Introduction
 
 [PlantUML](https://plantuml.com/) is a rendering tool for diagrams defined in a plain-text domain-specific language.
