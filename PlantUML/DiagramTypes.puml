@@ -1,18 +1,37 @@
-@startuml
+@startuml UML Diagram Types
 'https://plantuml.com/class-diagram
 
 left to right direction
 
 skinparam Padding 2
 skinparam NodeSep 8
+skinparam RankSep 30
 skinparam groupInheritance 2
 
-skinparam class {
-    BackgroundColor<<Category>> LightGray
-    BackgroundColor<<SupportedDiagram>> Yellow
-    BackgroundColor<<Diagram>> White
-    ArrowColor Black
+skinparam class<<Category>> {
+    BackgroundColor White
     BorderColor Black
+}
+
+skinparam class<<FrequentSupported>> {
+    BackgroundColor Green
+    BorderColor Black
+    FontColor White
+}
+
+skinparam class<<Supported>> {
+    BackgroundColor LightGreen
+    BorderColor Black
+}
+
+skinparam class<<Unsupported>> {
+    BackgroundColor LightGray
+    BorderColor DimGray
+    FontColor DimGray
+}
+
+skinparam class {
+    ArrowColor Black
 }
 
 hide circle
@@ -30,43 +49,49 @@ Diagram <|-- Structure
 Diagram <|-- Behaviour
 
 together {
-    class Profile as "Profile\nDiagram" <<Diagram>>
-    class Class as "Class\nDiagram" <<SupportedDiagram>>
-    class CompositeStructure as "Composite Structure\nDiagram" <<Diagram>>
-    class Component as "Component\nDiagram" <<SupportedDiagram>>
-    class Deployment as "Deployment\nDiagram" <<SupportedDiagram>>
-    class Object as "Object\nDiagram" <<SupportedDiagram>>
-    class Package as "Package\nDiagram" <<Diagram>>
+    class Profile as "Profile Diagram" <<Unsupported>>
+    class Class as "Class Diagram" <<FrequentSupported>>
+    class CompositeStructure as "Composite Structure Diagram" <<Unsupported>>
+    class Component as "Component Diagram" <<Supported>>
+    class Deployment as "Deployment Diagram" <<Supported>>
+    class Object as "Object Diagram" <<Supported>>
+    class Package as "Package Diagram" <<Unsupported>>
 }
 
-Structure <|-- Profile
-Structure <|-- Class
-Structure <|-- CompositeStructure 
-Structure <|-- Component 
-Structure <|-- Deployment 
-Structure <|-- Object
-Structure <|-- Package
+Structure <|--- Profile
+Structure <|--- Class
+Structure <|--- CompositeStructure 
+Structure <|--- Component 
+Structure <|--- Deployment 
+Structure <|--- Object
+Structure <|--- Package
 
-class Activity as "Activity\nDiagram" <<SupportedDiagram>>
+class Activity as "Activity Diagram" <<Supported>>
 abstract Interaction as "Interaction\nDiagrams" <<Category>>
-class UseCase as "Use Case\nDiagram" <<SupportedDiagram>>
-class StateMachine as "State Machine\nDiagram" <<SupportedDiagram>>
+class UseCase as "Use Case Diagram" <<FrequentSupported>>
+class StateMachine as "State Machine Diagram" <<Supported>>
 
-Behaviour <|-- Activity
+Behaviour <|--- Activity
 Behaviour <|-- Interaction
-Behaviour <|-- UseCase
-Behaviour <|-- StateMachine 
+Behaviour <|--- UseCase
+Behaviour <|--- StateMachine 
 
 together {
-    class Sequence as "Sequence\nDiagram" <<SupportedDiagram>>
-    class Communication as "Communication\nDiagram" <<Diagram>>
-    class InteractionOverview as "Interaction Overview\nDiagram" <<Diagram>>
-    class Timing as "Timing\nDiagram" <<Diagram>>
+    class Sequence as "Sequence Diagram" <<FrequentSupported>>
+    class Communication as "Communication Diagram" <<Unsupported>>
+    class InteractionOverview as "Interaction Overview Diagram" <<Unsupported>>
+    class Timing as "Timing Diagram" <<Unsupported>>
 }
 
 Interaction <|-- Sequence 
 Interaction <|-- Communication
 Interaction <|-- InteractionOverview
 Interaction <|-- Timing
+
+legend bottom
+    |<#Green> <color:#White>Supported + Frequently Used |
+    |<#LightGreen> Supported |
+    |<#LightGray> <color:#DimGray>Unsupported |
+endlegend
 
 @enduml
